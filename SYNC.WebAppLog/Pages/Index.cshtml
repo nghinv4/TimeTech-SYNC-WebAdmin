@@ -1,0 +1,46 @@
+﻿@page
+@using SYNC.WebAppLog.Pages
+@model IndexModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.location.href = "/Report/HealthChecks";
+            //alert("Hey! I am ready ");
+        });
+    </script>
+}
+
+<!--<div class="login-box-body">
+    <p class="login-box-msg title-system">INTERNAL MANAGEMENT</p>
+    <p class="login-box-msg">Sign in to start your session</p>
+    <form method="post">
+        <div class="form-group has-feedback">
+            <input id="txtUserName" type="text" class="form-control" placeholder="User name">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input id="txtPassword" type="password" class="form-control" placeholder="Password">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-8">
+                <div class="checkbox icheck">
+                    <label>
+                        <input type="checkbox"> Remember Me
+                    </label>
+                </div>
+            </div>-->
+            <!-- /.col -->
+            <!--<div class="col-xs-4">
+                <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+            </div>-->
+            <!-- /.col -->
+        <!--</div>
+    </form>
+</div>-->
+

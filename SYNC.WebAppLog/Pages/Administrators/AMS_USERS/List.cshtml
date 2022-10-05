@@ -1,0 +1,261 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.ListModel
+@{
+    ViewData["Title"] = "Management users";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+
+@section scripts {
+    <script type="text/javascript">
+        var TEMPLATE_DATA_AMS_USERS = '';
+        $(function () {
+            TEMPLATE_DATA_AMS_USERS = $("#gridAMS_USERS")[0].innerHTML.replaceAll('realms={realms}', "realms=" + COMMON.GetUrlParam('realms'));
+            var DATA_AMS_USERS = [{
+                "TEMPLATE": TEMPLATE_DATA_AMS_USERS,
+                "CONTAINER_PAGINATION": "paginationData",
+                "CONTAINER": "gridAMS_USERS",
+                "CONTAINER_TOTAL_RECORD": "totalRecords",
+                "DATA_SOURCES": "Identity/auth/GetAllWithPagination",
+                "SERVICE_NAME": "Identity",
+                "ARRAY_KEY": ['id', 'username', 'firstName', 'lastName', 'email', 'enabled'],
+                "LIST_PARAM": $.parseJSON('{"realms":"' + COMMON.GetUrlParam('realms') + '","keyword":"-1","PageIndex":' + PAGE_INDEX + ',"PageSize":' + PAGE_SIZE + '}'),
+                "DISLAY": "table-header-group",
+                "THIS_IS_CALL_BACK": AMS_USERS_CALL_BACK
+            }];
+            PROVIDER.PROCESSING_PAGINATION(DATA_AMS_USERS);
+
+        });
+
+        function AMS_USERS_CALL_BACK(data) {
+            $(".AMS_USERS-List-Title").html(COMMON.GetUrlParam('realms') + " management");
+            $(".AMS-INSERT a").attr("href", "/Administrators/AMS_USERS/Edit?fn=20200616164432&realms=" + COMMON.GetUrlParam('realms'));
+            if (COMMON.GetUrlParam('realms') === 'master') {                
+                var htmlObj = $($("#gridAMS_USERS")[0].innerHTML);               
+                htmlObj.find("#AMS-EDIT").html('#####');
+                htmlObj.find("#AMS-RESET").html('#####');
+                htmlObj.find("#AMS-DELETE").html('#####');
+                $("#gridAMS_USERS").html(htmlObj);                
+            }
+
+
+            //var SESSION_DATA = JSON.parse(localStorage.getItem("SESSION_INFO"));
+            //var USER_NAME = SESSION_DATA.Data.AMS_USER_INFO.USER_NAME;
+            //if (USER_NAME != 'administrator')
+            //    $(".administrator").remove();
+        }
+
+        function AMS_USERS_DELETE(value) {
+            if (value.length == 0) {
+                var checked = 0;
+                $(".checkbox-item").each(function () {
+                    if (this.checked) {
+                        checked++;
+                    }
+                });
+                if (checked == 0) {
+                    FORM.ShowMessage("Select information to be deleted!", 'Error');
+                    return;
+                }
+                else {
+                    if (confirm("Confirm Delete data!") == true) {
+                        $(".checkbox-item").each(function () {
+                            if (this.checked) {
+                                var DATA_AMS_USERS = [{
+                                    "ID": $(this).val(),
+                                    "DATA_SOURCES": "Identity/auth/Delete" + '/' + COMMON.GetUrlParam('realms'),
+                                    "SERVICE_NAME": "Identity"
+                                }];
+                                PROVIDER.DELETE(DATA_AMS_USERS);
+                            }
+                        });
+                    }
+                }
+            } else {
+                if (confirm("Confirm Delete data!") == true) {
+                    var DATA_AMS_USERS = [{
+                        "ID": value,
+                        "DATA_SOURCES": "Identity/auth/Delete" + '/' + COMMON.GetUrlParam('realms'),
+                        "SERVICE_NAME": "Identity"
+                    }];
+                    PROVIDER.DELETE(DATA_AMS_USERS);
+                }
+
+            }
+
+        }
+
+        function AMS_USERS_SEARCH() {
+
+            var Keyword = $("#txtKeyword").val();
+            if (Keyword == null || Keyword.length == 0) {
+                Keyword = -1
+            }
+            var DATA_AMS_USERS = [{
+                "TEMPLATE": TEMPLATE_DATA_AMS_USERS,
+                "CONTAINER_PAGINATION": "paginationData",
+                "CONTAINER": "gridAMS_USERS",
+                "CONTAINER_TOTAL_RECORD": "totalRecords",
+                "DATA_SOURCES": "Identity/auth/GetAllWithPagination",
+                "SERVICE_NAME": "Identity",
+                "ARRAY_KEY": ['id', 'username', 'firstName', 'lastName', 'email', 'enabled'],
+                "LIST_PARAM": $.parseJSON('{"realms":"' + COMMON.GetUrlParam('realms') + '","keyword":"' + Keyword + '","PageIndex":' + PAGE_INDEX + ',"PageSize":' + PAGE_SIZE + '}'),
+                "DISLAY": "table-header-group"
+            }];
+            PROVIDER.PROCESSING_PAGINATION(DATA_AMS_USERS);
+        }
+        function ResetPassWord(id, userName, email) {
+            if ($("#divPoupChangePassWord")[0]) {
+                $('.divOpacity').css('display', 'block');
+                $('#divPoupChangePassWord').show();
+                $("#txtUserID").val(id);
+                $("#txtChange_UserName").val(userName);
+                $("#txtChange_Email").val(email);
+            }
+        }
+
+        function ResetPassWordSumit() {
+            if ($('#txtChange_Password_New').val().length == 0 || $('#txtChange_Password_Re').val().length == 0) {
+                FORM.ShowMessage('Re-enter your password', 'Warning');
+                return;
+            } else {
+                if ($('#txtChange_Password_New').val() != $('#txtChange_Password_Re').val()) {
+                    FORM.ShowMessage('The two passwords are not the same', 'Warning');
+                    return;
+                }
+            }
+            var postData = '{';
+            postData += '"realms": "' + COMMON.GetUrlParam('realms') + '",';
+            postData += '"id": "' + $("#txtUserID").val() + '",';
+            postData += '"dataPost": {';
+            postData += '     "type": "password",';
+            postData += '     "value": "' + $('#txtChange_Password_New').val() + '",';
+            postData += '     "temporary": false,';
+            postData += '     }';
+            postData += '}';
+            $.ajax({
+                type: "PUT",
+                url: COMMON.GetServiceUrl("Identity/auth/ResetPassword", "Identity"),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                crossDomain: true,
+                data: postData,
+                beforeSend: function (req) {
+                    req.setRequestHeader("Authorization", JSON.parse(window.localStorage.getItem("auth_api_gateway")).IdentityToken);
+                },
+                success: function (result) {
+                    if (result.ResultCode == '203')
+                        FORM.ShowMessage(result.Message, 'Error');
+                    if (result.ResultCode == '403')
+                        FORM.ShowMessage(result.Message, 'Warning');
+                    if (result.ResultCode == '404')
+                        FORM.ShowMessage(result.Message, 'Warning');
+                    if (result.ResultCode == '200') {
+                        FORM.ShowMessage(result.Message, 'Success');
+                    }
+                }
+            });
+        }
+
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span class="AMS_USERS-List-Title" style="padding-left: 5px; font-size: 20px;">Management users</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm"><i class="fa fa-download"></i>&nbsp;Events</button>
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="AMS-INSERT"><a href="/Administrators/AMS_USERS/Edit?fn=20200616164432"><i class="fa fa-plus"></i>Create new</a></li>
+                            <li class="AMS-DELETE"><a href="javascript:AMS_USERS_DELETE('');"><i class="fa fa-trash-o"></i>Delete</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Dashboard" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="margin">
+
+                <div class="btn-group">
+                    <label class="control-label">User name</label><br />
+                    <input id="txtKeyword" class="form-control pull-right" placeholder="Keyword..." style="width: 350px;" type="text">
+                </div>
+                <div class="PRF-SEARCH btn-group" style="padding-top: 25px;">
+                    <a href="javascript:AMS_USERS_SEARCH();" style="color: #fff;" title="Search" class="btn btn-success btn-sm">
+                        <i class="fa fa-search"></i>Search
+                    </a>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-hover dataTable">
+                    <thead>
+
+                        <tr>
+                            <th class="class-checkbox">
+                                <input id="ckCheckbox" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridAMS_USERS', 'checkbox-item');" type="checkbox" />
+                            </th>
+
+                            <th class="">User name</th>
+
+                            <th class="">First name</th>
+
+                            <th class="">Last name</th>
+
+                            <th class="">Email</th>
+
+                            <th class="class-nowrap class-center">Status</th>
+                            <th class="class-center" colspan="3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridAMS_USERS" style="display: none;">
+
+                        <tr id="row_{id}">
+                            <td class="class-checkbox">
+                                <input type="checkbox" class="checkbox-item" name="item" value="{id}" id="checkbox{id}">
+                            </td>
+
+                            <td class="">{username}</td>
+
+                            <td class="class-left ">{firstName}</td>
+
+                            <td class="class-left ">{lastName}</td>
+
+                            <td class="class-left ">{email}</td>
+
+                            <td class="class-center">{enabled}</td>
+
+                            <td id="AMS-EDIT" class="class-nowrap class-center"><a class="AMS-EDIT {username}" href="/Administrators/AMS_USERS/Edit?fn=20200616164432&realms={realms}&ID={id}"><i class="fa fa-fw fa-edit"></i> Edit</a></td>
+                            <td id="AMS-RESET" class="class-nowrap class-center"><a class="AMS-RESET {username}" href="javascript:ResetPassWord('{id}','{username}','{email}');"><i class="fa fa-trash-o"></i> Reset password</a></td>
+                            <td id="AMS-DELETE" class="class-nowrap class-center"><a class="AMS-DELETE {username}" href="javascript:AMS_USERS_DELETE('{id}');"><i class="fa fa-trash-o"></i> Delete</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="paginator">
+                    <ul id="paginationData" class="pagination">
+                    </ul>
+                </div>
+                <div class="paginator">
+                    <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecords">-1</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+

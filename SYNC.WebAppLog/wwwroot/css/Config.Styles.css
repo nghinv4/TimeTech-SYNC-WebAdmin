@@ -1,0 +1,252 @@
+﻿.title-system {
+    font-weight: bold;
+    font-size: 20px;
+    color: #3c8dbc;
+}
+.error-input, error-validate {
+    color: red !important;
+    background: #ccfff2 !important;
+}
+
+.table .class-checkbox {
+    width: 20px !important;
+    text-align: center !important;
+}
+
+.table .class-nowrap {
+    width: 20px !important;
+    white-space: nowrap !important;
+}
+
+.table .class-center {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.table .class-left {
+    text-align: left !important;
+}
+
+.table .class-right {
+    text-align: right !important;
+}
+
+.main-header .navbar {
+    margin-bottom: 0px !important;
+}
+
+.content-wrapper {
+    /*min-height: 1300px !important;*/
+    /*margin-top: -20px !important;*/
+}
+.wrapper {
+    min-height: 100% !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+#controlbar_host_basic {
+    width: 615px !important;
+}
+
+#controlbar_admin_basic {
+    width: 615px !important;
+}
+
+#ControlBar .subNav.advanced dl ul li {
+    min-height: 30px !important;
+    height: 30px !important;
+    width: 145px !important;
+}
+
+#ControlEditPageMenu > li > a,
+#ControlBar_CustomMenuItems > li > a,
+#ControlActionMenu > li > a {
+    height: 55px !important;
+}
+
+#ControlNav > li > a {
+    height: 53px !important;
+}
+
+#ControlNav .subNav {
+    top: 53px !important;
+}
+
+#ControlEditPageMenu > li ul {
+    top: 55px !important;
+}
+
+.mark, mark {
+    background-color: none !important;
+}
+
+.main-header .logo .logo-lg {
+    z-index: 9999 !important;
+    position: absolute;
+    padding-left: 20px;
+}
+
+.sidebar {
+    padding-bottom: 0px !important;
+}
+
+.tab-content > .active {
+    padding: 15px 15px;
+}
+
+.morris-hover .morris-default-style {
+    position: absolute !important;
+}
+
+.small-box-footer {
+    margin-top: 10px;
+    float: right;
+}
+
+.row {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+.btn-group > .btn + .dropdown-toggle {
+    /*padding-bottom: 11px !important;*/
+}
+
+.btn .caret {
+    /*margin-top: 8px !important;*/
+}
+
+.dataTable > tbody > tr > td, .dataTable > tbody > tr > th, .dataTable > tfoot > tr > td, .dataTable > tfoot > tr > th, .dataTable > thead > tr > td, .dataTable > thead > tr > th {
+    font-size: 14px !important;
+}
+
+.paginator {
+    float: right !important;
+}
+
+.pagination {
+    margin: 10px 0 !important;
+}
+
+.nav-tabs.nav-justified {
+    /*admin moi dung dn*/
+    /*margin-top: 55px !important;*/
+}
+
+#fix-edit-content label {
+    /*margin-top: 5px !important;*/
+    text-align: right;
+}
+
+#fix-edit-content .checkbox, .radio {
+    margin-top: 0px !important;
+}
+
+.box-header > .box-tools {
+    right: 10px !important;
+}
+
+#firstDropDownTree .btn-default {
+    background-color: #fff;
+    color: #444;
+    border-color: #ddd;
+    height: 30px;
+}
+
+.dropdown-tree .caret {
+    margin-top: 0px !important;
+    margin-left: 10px !important;
+}
+
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right), .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+    display: block !important;
+    position: absolute !important;
+    width: 250px !important;
+    left: 50px !important;
+    /*top: 39px !important;*/
+}
+
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+    top: 38px !important;
+    margin-left: 0 !important;
+}
+
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    top: 0 !important;
+    margin-left: -3px !important;
+    padding: 9px 20px !important;
+    background-color: inherit !important;
+}
+
+.sidebar-menu .treeview-menu > li > a {
+    padding: 5px 5px 5px 10px !important;
+    display: block !important;
+    font-size: 14px !important;
+}
+
+.sidebar-menu > li > a {
+    padding: 10px 15px !important;
+    display: block !important;
+}
+
+.dropdown-tree > ul {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    white-space: nowrap !important;
+    margin-left: 15px !important;
+}
+
+.form-horizontal .checkbox, .form-horizontal .radio{
+    margin-left:20px !important;
+}
+
+.daredevel-tree li span{
+    margin-left:10px !important;
+    position:absolute !important;
+}
+
+#treeViewContent {
+    padding-bottom: 20px !important;
+    padding-top: 10px !important;
+}
+#RoleMappings .todo-list > li {
+    background: #fff !important;
+    border-left: 2px solid #fff !important;
+}
+#ActionsMappings .todo-list > li {
+    background: #fff !important;
+    border-left: 2px solid #fff !important;
+}
+#FunctionsMappings .todo-list > li {
+    background: #fff !important;
+    border-left: 2px solid #fff !important;
+}
+
+
+.tableFixHead {
+    overflow: auto;
+    height: 400px;
+    padding: 0px !important;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+    .tableFixHead thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+/* Just common table stuff. Really. */
+.tableFixHead table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .tableFixHead th, .tableFixHead td {
+        padding: 8px 16px;
+    }
+
+.tableFixHead th {
+    background: #eee;
+}

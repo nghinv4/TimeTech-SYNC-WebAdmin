@@ -1,0 +1,244 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Administrators.AMS_ROLES.EditModel
+@{
+    ViewData["Title"] = "Create/Edit function";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            var id = COMMON.GetUrlParam('id');
+            if (id != null && id.length > 0) {
+                $("#divTitleForm").html("Category Roles > Edit infomation");
+                var containerId = COMMON.GetUrlParam('containerId');
+                AMS_ROLES.LOAD_INFO(id, containerId, AMS_ROLES_CALL_BACK);
+                AMS_ROLES.LOAD_ROLE_MAPPING_FUNCTIONS(AMS_ROLES.ROLE_MAPPING_FUNCTIONS_CALL_BACK);
+                AMS_ROLES.LOAD_ROLE_MAPPING_ACTIONS(AMS_ROLES.ROLE_MAPPING_ACTIONS_CALL_BACK);
+            } else {
+                $("#divTitleForm").html("Category Roles > Create infomation");
+                //AMS_ROLES.LOAD_SELECT(null,null);
+            }
+        });        
+        function AMS_ROLES_CALL_BACK(data) {  
+            $("#divHeaderTitle").html("Category Roles > Edit role > " + data.name);
+            var selectValue = data["containerId"] == "0" ? "-1" : data["containerId"];
+            $("#dropContainerId").val(selectValue);
+            //AMS_ROLES.LOAD_SELECT(selectValue);           
+        }
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row" style="margin-top:15px;">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right">
+                <li class="active"><a href="#Infomation" data-toggle="tab">Infomation</a></li>
+                <li id="tab-FunctionsMappings"><a href="#FunctionsMappings" data-toggle="tab">Functions Mappings</a></li>
+                <li id="tab-ActionsMappings"><a href="#ActionsMappings" data-toggle="tab">Actions Mappings</a></li>
+                <li class="pull-left header"><i class="fa fa-inbox"></i> <span id="divHeaderTitle">Create/Edit infomation</span></li>
+            </ul>
+            <div class="tab-content no-padding">
+                <div class="active tab-pane" id="Infomation">
+                    <div class="row no-print">
+                        <div class="col-xs-12" style="padding: 10px 0px 0px 0px;">
+                            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                                    <div class="btn-group AMS-UPDATE">
+                                        <a style="color: #fff;" href="javascript:AMS_ROLES.INSERT_UPDATE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a style="color: #fff;" href="/Administrators/AMS_ROLES/List?fn=20200617140640" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-reply"></i>&nbsp;Back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="box box-solid">
+                        <form class="form-horizontal">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Role name :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtROLE_NAME" class="form-control" maxlength="125" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Container Id :</label>
+                                    <div class="col-sm-10">
+                                        <select id="dropContainerId" class="form-control select2">
+                                            @*<option value="{Name}">{Description}</option>*@
+                                            <option value="-1">-- Select --</option>
+                                            <option value="SYNC_PROFILE">Account SYNC_PROFILE</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Description :</label>
+                                    <div class="col-sm-10">
+                                        <textarea rows="3" placeholder="Text Input" id="txtDESCRIPTION" class="input-value form-control" maxlength="500"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Composite :</label>
+                                    <div class="col-sm-10">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="ckComposite" value="">Activate
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Client Role :</label>
+                                    <div class="col-sm-10">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="ckClientRole" value="">Activate
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="FunctionsMappings">
+                    <div class="row no-print">
+                        <div class="col-xs-12" style="padding: 10px 0px 0px 0px;">
+                            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                                    <div class="btn-group AMS-UPDATE">
+                                        <a style="color: #fff;" href="javascript:AMS_ROLES.ROLE_MAPPING_FUNCTIONS_SAVE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a style="color: #fff;" href="/Administrators/AMS_ROLES/List?fn=20200617140640" title="Back to Dashboard" class="user-RoleMappings btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-reply"></i>&nbsp;Back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <ul id="template-FunctionsMappings" class="todo-list">
+                        <li>
+                            <span class="handle">
+                                <i class="fa fa-ellipsis-v"></i>
+                                <i class="fa fa-ellipsis-v"></i>
+                            </span>
+                            <input id="{CODE}" class="checkbox-role-mapping-function" type="checkbox" title="{DESCRIPTION}" value="{CODE}" name="{CODE}">
+                            <span class="text">{FUNCTION_NAME}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-pane" id="ActionsMappings">
+                    <div class="row no-print">
+                        <div class="col-xs-12" style="padding: 10px 0px 0px 0px;">
+                            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                                    <div class="btn-group AMS-UPDATE">
+                                        <a style="color: #fff;" href="javascript:AMS_ROLES.ROLE_MAPPING_ACTIONS_SAVE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a style="color: #fff;" href="/Administrators/AMS_ROLES/List?fn=20200617140640" title="Back to Dashboard" class="user-RoleMappings btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-reply"></i>&nbsp;Back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <ul id="template-ActionsMappings" class="todo-list">
+                        <li>
+                            <span class="handle">
+                                <i class="fa fa-ellipsis-v"></i>
+                                <i class="fa fa-ellipsis-v"></i>
+                            </span>
+                            <input id="{CODE}" class="checkbox-role-mapping-action" type="checkbox" title="{DESCRIPTION}" value="{CODE}" name="{CODE}">
+                            <span class="text">{ACTION_NAME}</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+@*<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="divTitleForm" style="padding-left: 5px; font-size: 20px;"> Create/Edit infomation</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group AMS-UPDATE">
+                        <a style="color: #fff;" href="javascript:AMS_ROLES.INSERT_UPDATE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                        </a>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Administrators/AMS_ROLES/List?fn=20200617140640" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title"><span class="Language-AMS_ROLES-Edit-Info"></span></h3>
+            </div>
+            <form class="form-horizontal">
+                <div class="box-body">                    
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Function name :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtROLE_NAME" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>                    
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Container Id :</label>
+                        <div class="col-sm-10">
+                            <select id="dropContainerId" class="form-control select2">
+                                <option value="{Name}">{Description}</option>
+                            </select>
+                        </div>
+                    </div>                    
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Description :</label>
+                        <div class="col-sm-10">
+                            <textarea rows="3" placeholder="Text Input" id="txtDESCRIPTION" class="input-value form-control" maxlength="500"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Composite :</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox">
+                                <input type="checkbox" id="ckComposite" value="">Activate
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Client Role :</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox">
+                                <input type="checkbox" id="ckClientRole" value="">Activate
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>*@

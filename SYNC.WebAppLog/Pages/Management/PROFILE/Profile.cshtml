@@ -1,0 +1,235 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Management.PROFILE.ProfileModel
+@{
+    ViewData["Title"] = "PROFILE";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            GOOGLE_DRIVE.LOAD_SELECT(null, "DRIVE_TYPE_01");
+            DATA_PROFILE.LOAD_DATA();
+        });
+        function UploadProfile() {
+            if ($("#divPoupUploadProfile")[0]) {
+                if ($("#divPoupBox-titleUploadProfile")[0]) {
+                    $("#divPoupBox-titleUploadProfile").html("Upload file google drive");
+                }
+                $(".divOpacity").css('display', 'block');
+                $("#divPoupUploadProfile").show();
+            }
+        }
+        function ImportProfile() {
+            if ($("#divPoupImportProfile")[0]) {
+                if ($("#divPoupBox-titleImportProfile")[0]) {
+                    $("#divPoupBox-titleImportProfile").html("Import Profile google drive");
+                    DATA_PROFILE.POUP_LOAD_DATA();
+                }                
+                $("#divOpacityImportProfile").css('display', 'block');                
+                $("#divPoupImportProfile").show();
+            }
+        }
+        function ClosePoupImportProfile () {
+            $("#divOpacityImportProfile").css('display', 'none');
+            if ($('#divPoupImportProfile')[0])
+                $('#divPoupImportProfile').hide();
+        }
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="div-title-content" style="padding-left: 5px; font-size: 20px;">Profile Management</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm"><i class="fa fa-download"></i>&nbsp;Events</button>
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="PRF-UPLOAD"><a href="javascript:UploadProfile();"><i class="fa fa-cloud-upload"></i>Upload</a></li>
+                            <li class="PRF-IMPORT"><a href="javascript:ImportProfile();"><i class="fa fa-cloud"></i>Import</a></li>
+                            <li class="AMS-APPROVAL"><a href="javascript:DATA_PROFILE.APPROVAL('');"><i class="fa fa-check-square-o"></i>Approval</a></li>
+                            <li class="AMS-DELETE"><a href="javascript:DATA_PROFILE.DELETE('');"><i class="fa fa-trash-o"></i>Delete</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Dashboard" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="margin">
+                <div class="btn-group">
+                    <label class="control-label">Profile name </label><br />
+                    <input id="txtPROFILE_NAME" class="form-control pull-right" placeholder="Profile name..." style="        width: 150px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Storage</label><br />
+                    <select id="dropDRIVE_NAME" class="form-control select2" style="width: 250px;">
+                        <option value="{DRIVE_NAME}">{DRIVE_NAME}</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Start date </label><br />
+                    <input id="txtCDATE_START_DATE" class="datepickerStart form-control pull-right" placeholder="Start date..." style="width: 150px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Start date </label><br />
+                    <input id="txtCDATE_END_DATE" class="datepickerEnd form-control pull-right" placeholder="Start date..." style="        width: 150px;" type="text">
+
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Activate</label><br />
+                    <select id="dropSTATUS" class="form-control select2" style="width: 150px;">
+                        <option selected="selected" value="-1">--Select--</option>
+                        <option value="0">Pending</option>
+                        <option value="1">Approval</option>
+                        <option value="2">Assign</option>
+                    </select>
+                </div>
+                <div class="PRF-SEARCH btn-group" style="padding-top: 25px;">
+                    <a href="javascript:DATA_PROFILE.SEARCH();" style="color: #fff;" title="Search" class="btn btn-success btn-sm">
+                        <i class="fa fa-search"></i>Search
+                    </a>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-hover dataTable">
+                    <thead>
+                        <tr>
+                            <th class="class-checkbox">
+                                <input id="ckCheckbox" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridDataList', 'checkbox-item');" type="checkbox" />
+                            </th>
+                            <th class="class-nowrap">NO</th>
+                            <th class="class-nowrap">PROFILE_NAME</th>
+                            <th class="class-nowrap">STORAGE</th>
+                            <th class="class-nowrap">FILE_NAME</th>
+                            <th class="class-nowrap class-center">VERSION</th>
+                            <th class="class-nowrap class-center">SIZE</th>
+                            <th class="class-nowrap class-center">STATUS</th>
+                            <th class="class-nowrap class-center">CUSER</th>
+                            <th class="class-nowrap class-center">CDATE</th>
+                            <th class="class-center" colspan="2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridDataList" style="display: none;">
+                        <tr id="row_{CODE}">
+                            <td class="class-checkbox">
+                                <input type="checkbox" class="checkbox-item" name="item" value="{CODE}" id="checkbox{CODE}">
+                            </td>
+                            <td class="class-nowrap">{NO}</td>
+                            <td class="class-nowrap">{PROFILE_NAME}</td>
+                            <td class="class-nowrap">{STORAGE}</td>
+                            <td class="class-nowrap">{FILE_NAME}</td>
+                            <td class="class-nowrap class-center">{VERSION}</td>
+                            <td class="class-nowrap class-center">{SIZE_FormatNumber}</td>
+                            <td class="class-nowrap class-center">{STATUS}</td>
+                            <td class="class-nowrap class-center">{CUSER}</td>
+                            <td class="class-nowrap class-center">{CDATE_Timestamp}</td>
+                            <td class="class-nowrap class-center"><a class="PRF-APPROVAL" href="javascript:DATA_PROFILE.APPROVAL('{CODE}');"><i class="fa fa-check-square-o"></i> Approval</a></td>
+                            <td class="class-nowrap class-center"><a class="PRF-DELETE" href="javascript:DATA_PROFILE.DELETE('{CODE}');"><i class="fa fa-trash-o"></i> Delete</a></td>
+
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="paginator">
+                    <ul id="paginationData" class="pagination">
+                    </ul>
+                </div>
+                <div class="paginator">
+                    <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecords">-1</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<div id="divPoupUploadProfile" style="width: auto; height: auto; background: #fff; margin: 0 auto; z-index: 200; position: fixed; top: 80px; left: 20%; right: 20%; border-radius: 5px 5px 5px 5px; display: none;">
+    <div class="box box-primary" style="margin-bottom:0px !important;">
+        <div class="box-header with-border">
+            <h3 id="divPoupBox-titleUploadProfile" class="box-title">Upload file google drive</h3>
+            <div class="box-tools pull-right">
+                <a href="javascript:FORM.ClosePoup1('divPoupUploadProfile');" class="btn btn-box-tool"><i class="fa fa-times"></i></a>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form role="form">
+            <div class="box-body" style="padding-left:20px;padding-right:20px;">
+                <div class="form-group">
+                    <label for="exampleInputFile">File input</label>
+                    <input type="file" id="transactionInputFile">
+                    <p id="help-transaction" class="help-block">Example block-level help text here.</p>
+                </div>
+                <div class="progress">
+                    <div id="div-progress-bar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                        <span id="div-progress-bar-span" class="sr-only" style="position: relative !important;">0% Complete</span>
+                    </div>
+                </div>
+                @*<a href="javascript:GOOGLE_DRIVE_STORAGE.UPLOAD();" class="submit-upload-transaction btn btn-success btn-sm pull-right">Upload</a>*@
+            </div>
+        </form>
+    </div>
+    <div style="text-align:center;clear:both;padding:10px;">
+        <a href="javascript:GOOGLE_DRIVE_STORAGE.UPLOAD();" class="btn btn-success btn-sm">Upload profile</a>
+        <a href="javascript:FORM.ClosePoup1('divPoupUploadProfile');" class="btn btn-primary btn-sm">Cancel</a>
+    </div>
+</div>
+<div id="divPoupImportProfile" style="width: auto; height: auto; background: #fff; margin: 0 auto; z-index: 1200; position: fixed; top: 80px; left: 20%; right: 20%; border-radius: 5px 5px 5px 5px; display: none;">
+    <div class="box box-warning" style="margin-bottom:0px !important;">
+        <div class="box-header with-border">            
+            <h3 id="divPoupBox-titleImportProfile" class="box-title">Import Profile to google drive</h3>
+            <div class="box-tools pull-right">
+                <a href="javascript:ClosePoupImportProfile();" class="btn btn-box-tool"><i class="fa fa-times"></i></a>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form class="form-horizontal">
+            <div class="tableFixHead box-body table-responsive">
+                <table class="table table-bordered table-hover dataTable">
+                    <thead>
+                        <tr>
+                            <th class="class-nowrap class-checkbox">
+                                <input id="ckCheckboxPoup" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridDataListPoup', 'checkbox-itemPoup');" type="checkbox" />
+                            </th>
+                            <th class="class-nowrap">NO</th>
+                            <th>File name</th>
+                            <th class="class-nowrap class-center" colspan="2">Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="gridDataListPoup" style="display: none;">
+                        <tr id="row_{KEY}">
+                            <td class="class-nowrap class-checkbox">
+                                <input type="checkbox" class="checkbox-itemPoup" name="{KEY}" value="{VALUE}" id="checkbox{KEY}">
+                            </td>
+                            <td class="class-nowrap">{KEY}</td>
+                            <td class="">{VALUE}</td>
+                            <td class="class-nowrap class-center"><a class="PRF-IMPORT" href="javascript:GOOGLE_DRIVE_STORAGE.IMPORT('{VALUE}','{KEY}');"><i class="fa fa-cloud"></i> Import</a></td>
+                            <td class="class-nowrap class-center"><a class="PRF-DELETE" href="javascript:DeleteImportProfile('{VALUE}');"><i class="fa fa-check-square-o"></i> Delete</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+    <div style="text-align:center;clear:both;padding:10px;">
+        <a href="javascript:GOOGLE_DRIVE_STORAGE.IMPORT('','');" class="btn btn-success btn-sm">Import profile</a>
+        <a href="javascript:ClosePoupImportProfile();" class="btn btn-primary btn-sm">Cancel</a>
+    </div>
+</div>
+<div id="divOpacityImportProfile" style="opacity: 0.4; background: #000; width: 100%; height: 125%; position: fixed; left: 0; top: -80px; display: none; z-index: 1000;">
+</div>
+

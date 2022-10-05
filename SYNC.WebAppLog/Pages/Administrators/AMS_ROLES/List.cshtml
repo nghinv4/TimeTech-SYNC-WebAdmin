@@ -1,0 +1,112 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Administrators.AMS_ROLES.ListModel
+@{
+    ViewData["Title"] = "Roles";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            /*AMS_ROLES.LOAD_SELECT(null, AMS_ROLES_CALL_BACK);*/
+            document.getElementById("dropContainerId").selectedIndex = "1";
+            AMS_ROLES.SEARCH();
+        });
+        //function AMS_ROLES_CALL_BACK() {
+        //    document.getElementById("dropContainerId").selectedIndex = "1";
+        //    AMS_ROLES.SEARCH();
+        //}
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="div-title-content" style="padding-left: 5px; font-size: 20px;">Category Roles</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm"><i class="fa fa-download"></i>&nbsp;Events</button>
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="AMS-INSERT"><a href="/Administrators/AMS_ROLES/Edit?fn=20200616164432"><i class="fa fa-plus"></i>Create new</a></li>
+                            <li class="AMS-DELETE"><a href="javascript:AMS_ROLES.DELETE('','');"><i class="fa fa-trash-o"></i>Delete</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Dashboard" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="margin">
+                <div class="btn-group">
+                    <label class="control-label">Keyword </label><br />
+                    <input id="txtKeyword" class="form-control pull-right" placeholder="Code..." style="width: 250px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Parent code</label><br />
+                    <select id="dropContainerId" class="form-control select2" style="width: 250px;">
+                        @*<option value="{Name}">{Description}</option>*@
+                        <option value="-1">-- Select --</option>
+                        <option value="INTERNAL">Account SYNC_PROFILE</option>
+                    </select>
+                </div>
+                <div class="PRF-SEARCH btn-group" style="padding-top: 25px;">
+                    <a href="javascript:AMS_ROLES.SEARCH();" style="color: #fff;" title="Search" class="btn btn-success btn-sm">
+                        <i class="fa fa-search"></i>Search
+                    </a>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-hover dataTable">
+                    <thead>
+                        <tr>
+                            <th class="class-checkbox">
+                                <input id="ckCheckbox" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridDataList', 'checkbox-item');" type="checkbox" />
+                            </th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th class="class-nowrap">Composite</th>
+                            <th class="class-nowrap">ClientRole</th>
+                            <th class="class-nowrap class-center">ContainerId</th>
+                            <th class="class-center" colspan="2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridDataList" style="display: none;">
+                        <tr id="row_{id}">
+                            <td class="class-checkbox">
+                                <input type="checkbox" class="checkbox-item" name="item" value="{id}" id="checkbox{id}">
+                            </td>
+                            <td>{name}</td>
+                            <td>{description}</td>
+                            <td class="class-nowrap class-center">{composite}</td>
+                            <td class="class-nowrap class-center">{clientRole}</td>
+                            <td class="class-nowrap class-center">{containerId}</td>
+                            <td id="PRF-EDIT" class="class-nowrap class-center"><a class="PRF-EDIT" href="/Administrators/AMS_ROLES/Edit?fn=20200616164432&containerId={containerId}&id={id}"><i class="fa fa-fw fa-edit"></i> Edit</a></td>
+                            <td id="PRF-DELETE" class="class-nowrap class-center"><a class="PRF-DELETE" href="javascript:AMS_ROLES.DELETE('{id}','{containerId}');"><i class="fa fa-trash-o"></i> Delete</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="paginator">
+                    <ul id="paginationData" class="pagination">
+                    </ul>
+                </div>
+                <div class="paginator">
+                    <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecords">-1</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

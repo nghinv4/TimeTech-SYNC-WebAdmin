@@ -1,0 +1,503 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.EditModel
+@{
+    ViewData["Title"] = "Create/Edit infomation";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+
+@section scripts {
+    <script type="text/javascript">
+        var AMS_USERS_VALIDATE = {};
+        var AMS_USERS_BIND_DATA = {
+            "txtUSER_NAME": { "Type": "Textbox", "Mapping": "username" },
+            "txtFIRST_NAME": { "Type": "Textbox", "Mapping": "firstName" },
+            "txtLAST_NAME": { "Type": "Textbox", "Mapping": "lastName" },
+            "txtEMAIL": { "Type": "Textbox", "Mapping": "email" },
+            "txtPASSWORD": { "Type": "Textbox", "Mapping": "" },
+            "ckEmailVerified": { "Type": "Checkbox", "Mapping": "emailVerified" },
+            "ckSTATUS": { "Type": "Checkbox", "Mapping": "enabled" }
+        };
+        $(function () {
+            $.getJSON("/js/Country.json", function (data) {
+                var html = '';
+                $.each(data, function (key, value) {
+                    html += '<option value="' + key + '">' + value + '</option>';
+                });
+                $("#dropCountry").html(html);
+            });
+            $("a.user-Infomation").attr("href", "/Administrators/AMS_USERS/List?realms=" + COMMON.GetUrlParam('realms'));
+            $("a.user-RoleMappings").attr("href", "/Administrators/AMS_USERS/List?realms=" + COMMON.GetUrlParam('realms'));
+            var ID = COMMON.GetUrlParam('ID');
+            if (ID == '' || ID.length == 0) {                
+                $("#tab-RoleMappings").remove();
+                $('#txtCode').attr('readonly', true);
+                $("#divHeaderTitle").html(COMMON.GetUrlParam('realms') + " : " + "Create account");
+            } else {
+                $('#txtCode').attr('readonly', true);
+                $('#txtUSER_NAME').attr('readonly', true);
+                $('#txtPASSWORD').val('');
+                $('#txtPASSWORD').attr('readonly', true);
+                $('#txtRE_PASSWORD').attr('readonly', true);                
+                var DATA_AMS_USERS = [{
+                    "ID": ID,
+                    "LIST_CONTROLS_BIND_DATA": AMS_USERS_BIND_DATA,
+                    "DATA_SOURCES": "Identity/auth/GetById" + '/' + COMMON.GetUrlParam('realms'),
+                    "SERVICE_NAME": "Identity",
+                    "THIS_IS_CALL_BACK": THIS_IS_CALL_BACK
+                }];
+                PROVIDER.GET_INFO_BY_EDIT(DATA_AMS_USERS);
+                AMS_ROLES.LOAD_ROLE_MAPPING_USER(AMS_ROLES.ROLE_MAPPING_USER_CALL_BACK);
+            }
+        });
+       
+        function THIS_IS_CALL_BACK(data) {   
+            $("#divHeaderTitle").html(COMMON.GetUrlParam('realms') + " : " + "Edit account > " + data.username);
+            if (data.attributes.hasOwnProperty('Code'))
+                $('#txtCode').val(data.attributes.Code[0]);
+            if (data.attributes.hasOwnProperty('Phone'))
+                $('#txtPhone').val(data.attributes.Phone[0]);
+            if (data.attributes.hasOwnProperty('Address'))
+                $('#txtAddress').val(data.attributes.Address[0]);
+            if (data.attributes.hasOwnProperty('City'))
+                $('#txtCity').val(data.attributes.City[0]);
+            if (data.attributes.hasOwnProperty('DateOfBirth'))
+                $('#txtDateOfBirth').val(data.attributes.DateOfBirth[0]);
+            if (data.attributes.hasOwnProperty('ReferralCode'))
+                $('#txtReferralCode').val(data.attributes.ReferralCode[0]);
+            if (data.attributes.hasOwnProperty('Country'))
+                $("#dropCountry :selected").text(data.attributes.Country[0]);
+        }
+
+        function AMS_USERS_SAVE() {
+            var ID = COMMON.GetUrlParam('ID');
+            if (ID == '' || ID.length == 0) {
+                if ($('#txtPASSWORD').val().length == 0 || $('#txtRE_PASSWORD').val().length == 0) {
+                    FORM.ShowMessage('Re-enter your password', 'Warning');
+                    return;
+                } else {
+                    if ($('#txtPASSWORD').val() != $('#txtRE_PASSWORD').val()) {
+                        FORM.ShowMessage('The two passwords are not the same', 'Warning');
+                        return;
+                    }
+                }
+                var postData = '{';
+                postData += '"realms": "' + COMMON.GetUrlParam('realms') + '",';
+                postData += '     "dataPost": {';
+                postData += '     "username": "' + $('#txtUSER_NAME').val() + '",';
+                postData += '     "enabled": ' + $("#ckSTATUS").is(':checked') + ',';
+                postData += '     "emailVerified": ' + $("#ckEmailVerified").is(':checked') + ',';
+                postData += '     "email": "' + $('#txtEMAIL').val() + '",';
+                postData += '     "firstName": "' + $('#txtFIRST_NAME').val() + '",';
+                postData += '     "lastName": "' + $('#txtLAST_NAME').val() + '",';
+                postData += '     "credentials": [';
+                postData += '                    {';
+                postData += '                      "type": "password",';
+                postData += '                      "value": "' + $('#txtPASSWORD').val() + '",';
+                postData += '                      "temporary": false';
+                postData += '                    }';
+                postData += '               ],';
+                postData += '      "attributes": {';
+                postData += '          "Phone": ["' + $('#txtPhone').val() + '"],';
+                postData += '          "Address": ["' + $('#txtAddress').val() + '"],';
+                postData += '          "City": ["' + $('#txtCity').val() + '"],';
+                postData += '          "DateOfBirth": ["' + $('#txtDateOfBirth').val() + '"],';
+                postData += '          "ReferralCode": ["' + $('#txtReferralCode').val() + '"],';
+                postData += '          "Country": ["' + $("#dropCountry :selected").text() + '"]';
+                postData += '      }';
+                postData += '     }';
+                postData += '}';
+                $.ajax({
+                    type: "POST",
+                    url: COMMON.GetServiceUrl("Identity/auth/Create", "Identity"),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    crossDomain: true,
+                    data: postData,
+                    beforeSend: function (req) {
+                        req.setRequestHeader("Authorization", JSON.parse(window.localStorage.getItem("auth_api_gateway")).IdentityToken);
+                    },
+                    success: function (result) {
+                        if (result.ResultCode == '203')
+                            FORM.ShowMessage(result.Message, 'Error');
+                        if (result.ResultCode == '403')
+                            FORM.ShowMessage(result.Message, 'Warning');
+                        if (result.ResultCode == '404')
+                            FORM.ShowMessage(result.Message, 'Warning');
+                        if (result.ResultCode == '200') {
+                            FORM.ShowMessage(result.Message, 'Success');
+                        }
+                    }
+                });
+                //PROVIDER.ADD(DATA_AMS_USERS);
+            } else {
+                var postData = '{';
+                postData += '"realms": "' + COMMON.GetUrlParam('realms') + '",';
+                postData += '     "dataPost": {';
+                postData += '     "id": "' + ID + '",';
+                //postData += '     "createdTimestamp": 0,';
+                postData += '     "username": "' + $('#txtUSER_NAME').val() + '",';
+                postData += '     "enabled": ' + $("#ckSTATUS").is(':checked') + ',';
+                postData += '     "emailVerified": ' + $("#ckEmailVerified").is(':checked') + ',';
+                postData += '     "email": "' + $('#txtEMAIL').val() + '",';
+                postData += '     "firstName": "' + $('#txtFIRST_NAME').val() + '",';
+                postData += '     "lastName": "' + $('#txtLAST_NAME').val() + '",';
+                postData += '      "attributes": {';
+                postData += '          "Phone": ["' + $('#txtPhone').val() + '"],';
+                postData += '          "Address": ["' + $('#txtAddress').val() + '"],';
+                postData += '          "City": ["' + $('#txtCity').val() + '"],';
+                postData += '          "DateOfBirth": ["' + $('#txtDateOfBirth').val() + '"],';
+                postData += '          "ReferralCode": ["' + $('#txtReferralCode').val() + '"],';
+                postData += '          "Country": ["' + $("#dropCountry :selected").text() + '"]';
+                postData += '      }';
+                postData += '     }';
+                postData += '}';
+                $.ajax({
+                    type: "PUT",
+                    url: COMMON.GetServiceUrl("Identity/auth/Update", "Identity"),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    crossDomain: true,
+                    data: postData,
+                    beforeSend: function (req) {
+                        req.setRequestHeader("Authorization", JSON.parse(window.localStorage.getItem("auth_api_gateway")).IdentityToken);
+                    },
+                    success: function (result) {
+                        if (result.ResultCode == '203')
+                            FORM.ShowMessage(result.Message, 'Error');
+                        if (result.ResultCode == '403')
+                            FORM.ShowMessage(result.Message, 'Warning');
+                        if (result.ResultCode == '404')
+                            FORM.ShowMessage(result.Message, 'Warning');
+                        if (result.ResultCode == '200') {
+                            FORM.ShowMessage(result.Message, 'Success');
+                        }
+                    }
+                });
+                //PROVIDER.UPDATE(DATA_AMS_USERS);
+            }
+        }
+
+    </script>
+}
+
+<!-- Main content -->
+<section class="content">
+    <div class="row" style="margin-top:15px;">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right">
+                <li class="active"><a href="#Infomation" data-toggle="tab">Infomation</a></li>
+                <li id="tab-RoleMappings"><a href="#RoleMappings" data-toggle="tab">Role Mappings</a></li>
+                <li class="pull-left header"><i class="fa fa-inbox"></i> <span id="divHeaderTitle">Create/Edit infomation</span></li>
+            </ul>
+            <div class="tab-content no-padding">
+                <div class="active tab-pane" id="Infomation">
+                    <div class="row no-print">
+                        <div class="col-xs-12" style="padding: 10px 0px 0px 0px;">
+                            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                                    <div class="btn-group AMS-UPDATE">
+                                        <a style="color: #fff;" href="javascript:AMS_USERS_SAVE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a style="color: #fff;" href="/Administrators/AMS_USERS/List?fn=20200617140640" title="Back to Dashboard" class="user-Infomation btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-reply"></i>&nbsp;Back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="box box-solid">
+                        <form class="form-horizontal">
+                            <div class="box-body no-padding">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Code :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtCode" class="input-value form-control" maxlength="50" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">User name :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtUSER_NAME" class="input-value form-control" maxlength="50" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">First name :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtFIRST_NAME" class="form-control" maxlength="25" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Last name :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtLAST_NAME" class="form-control" maxlength="25" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Email :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtEMAIL" class="typeEmail input-value form-control" maxlength="128" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Password :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtPASSWORD" class="input-value form-control" maxlength="250" type="password">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Confirm password :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtRE_PASSWORD" class="input-value form-control" maxlength="250" type="password">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Email verified :</label>
+                                    <div class="col-sm-10">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="ckEmailVerified" value="">Activate
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Status :</label>
+                                    <div class="col-sm-10">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="ckSTATUS" value="">Activate
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="box-header with-border">
+                            <h3 class="box-title"><span class="AMS_USERS-Edit-Info">Other information</span></h3>
+                        </div>
+                        <form class="form-horizontal">
+                            <div class="box-body no-padding">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Referral Code :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtReferralCode" class="input-value form-control" maxlength="20" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Country :</label>
+                                    <div class="col-sm-10">
+                                        @*<input placeholder="Text Input" id="txtCity" class="form-control" maxlength="250" type="text">*@
+                                        <select id="dropCountry" class="form-control select2"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Phone :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtPhone" class="input-value form-control" maxlength="20" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Address :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtAddress" class="form-control" maxlength="250" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">City :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtCity" class="form-control" maxlength="250" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Date Of Birth :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtDateOfBirth" class="form-control pull-right datepicker" maxlength="10" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="RoleMappings">
+                    <div class="row no-print">
+                        <div class="col-xs-12" style="padding: 10px 0px 0px 0px;">
+                            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                                    <div class="btn-group AMS-UPDATE">
+                                        <a style="color: #fff;" href="javascript:AMS_ROLES.ROLE_MAPPING_USER_SAVE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a style="color: #fff;" href="/Administrators/AMS_USERS/List?fn=20200617140640" title="Back to Dashboard" class="user-RoleMappings btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-reply"></i>&nbsp;Back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <ul id="template-RoleMapping" class="todo-list">
+                        <li>
+                            <span class="handle">
+                                <i class="fa fa-ellipsis-v"></i>
+                                <i class="fa fa-ellipsis-v"></i>
+                            </span>
+                            <input id="{name}" class="checkbox-role-mapping-user" type="checkbox" title="{description}" value="{id}" name="{name}">
+                            <span class="text">{description}</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+@*<section class="content">
+        <div class="row no-print">
+            <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+                <div class="col-md-9" style="padding-left: 0px;">
+                    <h5><i class="fa fa-table"></i><span class="AMS_USERS-Edit-Title" style="padding-left: 5px; font-size: 20px;"> Create/Edit infomation</span></h5>
+                </div>
+                <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                    <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                        <div class="btn-group AMS-UPDATE">
+                            <a style="color: #fff;" href="javascript:AMS_USERS_SAVE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                                <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                            </a>
+                        </div>
+                        <div class="btn-group">
+                            <a style="color: #fff;" href="javascript:window.history.back();" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                                <i class="fa fa-reply"></i>&nbsp;Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><span class="AMS_USERS-Edit-Info">Infomation</span></h3>
+                </div>
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Code :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtCode" class="input-value form-control" maxlength="50" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">User name :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtUSER_NAME" class="input-value form-control" maxlength="50" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">First name :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtFIRST_NAME" class="form-control" maxlength="25" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Last name :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtLAST_NAME" class="form-control" maxlength="25" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Email :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtEMAIL" class="typeEmail input-value form-control" maxlength="128" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Password :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtPASSWORD" class="input-value form-control" maxlength="250" type="password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Confirm password :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtRE_PASSWORD" class="input-value form-control" maxlength="250" type="password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Email verified :</label>
+                            <div class="col-sm-10">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="ckEmailVerified" value="">Activate
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Status :</label>
+                            <div class="col-sm-10">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="ckSTATUS" value="">Activate
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="box-header with-border">
+                    <h3 class="box-title"><span class="AMS_USERS-Edit-Info">Other information</span></h3>
+                </div>
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Referral Code :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtReferralCode" class="input-value form-control" maxlength="20" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Country :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtCity" class="form-control" maxlength="250" type="text">
+                                <select id="dropCountry" class="form-control select2"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Phone :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtPhone" class="input-value form-control" maxlength="20" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Address :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtAddress" class="form-control" maxlength="250" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">City :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtCity" class="form-control" maxlength="250" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Date Of Birth :</label>
+                            <div class="col-sm-10">
+                                <input placeholder="Text Input" id="txtDateOfBirth" class="form-control pull-right datepicker" maxlength="10" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>*@
