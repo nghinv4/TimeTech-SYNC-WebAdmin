@@ -1,0 +1,124 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Administrators.GOOGLE_DRIVE.EditModel
+@{
+    ViewData["Title"] = "Create/Edit action";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            var code = COMMON.GetUrlParam('code');
+            if (code != null && code.length > 0) {
+                $("#divTitleForm").html("Category Google drive > Edit infomation");
+                GOOGLE_DRIVE.LOAD_INFO(code,THIS_IS_CALL_BACK);
+            } else {
+                $("#divTitleForm").html("Category Google drive > Create infomation");
+                CATEGORY.LOAD_SELECT(null);
+            }
+        });
+        function THIS_IS_CALL_BACK(data) {
+            var selectValue = data["DRIVE_TYPE"] == "0" ? "-1" : data["DRIVE_TYPE"];
+            CATEGORY.LOAD_SELECT(selectValue);           
+        }
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="divTitleForm" style="padding-left: 5px; font-size: 20px;"> Create/Edit infomation</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group AMS-UPDATE">
+                        <a style="color: #fff;" href="javascript:GOOGLE_DRIVE.INSERT_UPDATE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                        </a>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Administrators/GOOGLE_DRIVE/List?fn=20200617140640" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title"><span class="Language-GOOGLE_DRIVE-Edit-Info"></span></h3>
+            </div>
+            <form class="form-horizontal">
+                <div class="box-body">
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Code :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtCODE" class="form-control" maxlength="50" type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Drive name :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtDRIVE_NAME" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Google email :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtGOOGLE_EMAIL" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Directory code :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtDIRECTORY_CODE" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Directory name :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtDIRECTORY_NAME" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>       
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Drive type :</label>
+                        <div class="col-sm-10">
+                            <select id="dropPARENT_CODE" class="form-control select2">
+                                <option value="{CODE}">{NAME}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Description :</label>
+                        <div class="col-sm-10">
+                            <textarea rows="10" placeholder="Text Input" id="txtDESCRIPTION" class="input-value form-control" maxlength="10000"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Status :</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox">
+                                <input type="checkbox" id="ckSTATUS" value="">Activate
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Delete :</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox">
+                                <input type="checkbox" id="ckIS_DELETE" value="">Activate
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

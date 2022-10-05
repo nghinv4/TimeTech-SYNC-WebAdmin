@@ -1,0 +1,145 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Administrators.SYNC_LOG.DownloadVersionModel
+@{
+    ViewData["Title"] = "Download version";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            DOWNLOAD_VERSION.LOAD_DATA();
+        });
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="div-title-content" style="padding-left: 5px; font-size: 20px;">Category Actions</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm"><i class="fa fa-download"></i>&nbsp;Events</button>
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">                            
+                            <li class="AMS-DELETE"><a href="javascript:DOWNLOAD_VERSION.DELETE('');"><i class="fa fa-trash-o"></i>Delete</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Dashboard" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="margin">
+                <div class="btn-group">
+                    <label class="control-label">IP </label><br />
+                    <input id="txtIP" class="form-control pull-right" placeholder="Ip..." style="        width: 150px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">ACCOUNT </label><br />
+                    <input id="txtACCOUNT" class="form-control pull-right" placeholder="Account..." style="        width: 150px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">VERSION </label><br />
+                    <input id="txtVERSION" class="form-control pull-right" placeholder="Version..." style="        width: 150px;" type="text">
+                </div>                
+                <div class="btn-group">
+                    <label class="control-label">Activate</label><br />
+                    <select id="dropSERVER_NAME" class="form-control select2" style="width: 150px;">
+                        <option selected="selected" value="-1">--Select--</option>                        
+                        <option value="Server01">Server01</option>
+                        <option value="Server02">Server02</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Start date </label><br />
+                    <input id="txtCDATE_START_DATE" class="datepickerStart form-control pull-right" placeholder="Start date..." style="width: 150px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Start date </label><br />
+                    <input id="txtCDATE_END_DATE" class="datepickerEnd form-control pull-right" placeholder="Start date..." style="        width: 150px;" type="text">
+
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Activate</label><br />
+                    <select id="dropSTATUS" class="form-control select2" style="width: 150px;">
+                        <option selected="selected" value="-1">--Select--</option>                        
+                        <option value="0">Đang tải</option>
+                        <option value="1">Đang cập nhật</option>
+                        <option value="2">Thành công</option>
+                        <option value="3">Cập nhật lỗi</option>
+                    </select>
+                </div>
+                <div class="PRF-SEARCH btn-group" style="padding-top: 25px;">
+                    <a href="javascript:DOWNLOAD_VERSION.SEARCH();" style="color: #fff;" title="Search" class="btn btn-success btn-sm">
+                        <i class="fa fa-search"></i>Search
+                    </a>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-hover dataTable">
+                    <thead>
+                        <tr>
+                            <th class="class-checkbox">
+                                <input id="ckCheckbox" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridDataList', 'checkbox-item');" type="checkbox" />
+                            </th>
+                            <th class="class-nowrap">NO</th>                            
+                            <th class="class-nowrap">PROFILE_NAME</th>                            
+                            <th class="class-nowrap">IP</th>
+                            <th class="class-nowrap">ACCOUNT</th>
+                            <th class="class-nowrap class-center">VERSION</th>
+                            <th class="class-nowrap class-center">SERVER_NAME</th>
+                            <th class="class-nowrap class-center">START_DATE</th>
+                            <th class="class-nowrap class-center">END_DATE</th>
+                            <th class="class-nowrap class-center">SIZE</th>
+                            <th class="class-nowrap class-center">STATUS</th>
+                            <th class="class-nowrap class-center">CUSER</th>
+                            <th class="class-nowrap class-center">CDATE</th>                            
+                            <th class="class-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridDataList" style="display: none;">
+                        <tr id="row_{CODE}">
+                            <td class="class-checkbox">
+                                <input type="checkbox" class="checkbox-item" name="item" value="{CODE}" id="checkbox{CODE}">
+                            </td>
+                            <td class="class-nowrap">{NO}</td>                            
+                            <td class="class-nowrap">{PROFILE_NAME}</td>
+                            <td class="class-nowrap">{IP}</td>
+                            <td class="class-nowrap">{ACCOUNT}</td>
+                            <td class="class-nowrap class-center">{VERSION}</td>
+                            <td class="class-nowrap class-center">{SERVER_NAME}</td>
+                            <td class="class-nowrap class-center">{START_DATE_Timestamp}</td>
+                            <td class="class-nowrap class-center">{END_DATE_Timestamp}</td>
+                            <td class="class-nowrap class-center">{SIZE_FormatNumber}</td>
+                            <td class="class-nowrap class-center">{STATUS}</td>
+                            <td class="class-nowrap class-center">{CUSER}</td>
+                            <td class="class-nowrap class-center">{CDATE_Timestamp}</td>                            
+                            <td id="PRF-DELETE" class="class-nowrap class-center"><a class="PRF-DELETE" href="javascript:DOWNLOAD_VERSION.DELETE('{CODE}');"><i class="fa fa-trash-o"></i> Delete</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="paginator">
+                    <ul id="paginationData" class="pagination">
+                    </ul>
+                </div>
+                <div class="paginator">
+                    <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecords">-1</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

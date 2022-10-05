@@ -1,0 +1,46 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Report.HealthChecksModel
+@{
+    ViewData["Title"] = "Health checks-ui";
+    Layout = "~/Pages/Shared/_LayoutNone.cshtml";
+}
+@section scripts {
+    <style type="text/css">
+        .content{
+            padding:0px !important;
+        }
+        .healthchecks {
+            position: fixed;
+            top: 45px;
+            bottom: 0px;
+            right: 0px;
+            width: 100%;
+            border: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            z-index: 999999;
+            height: 100%;
+            display:none;
+        }
+    </style>
+    <script type="text/javascript">
+        if ($(".healthchecks")[0]) {
+            $(".healthchecks").removeAttr("src");
+            $(".healthchecks").attr("src", Setting.HealthCheckUrl);
+            $(".healthchecks").css("display", "block");
+        }
+    </script>
+}
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-table"></i><span style="padding-left: 5px; font-size: 20px;">Internal Healthchecks-ui</span></h3>        
+        <div class="box-tools pull-right">
+            <a href="/Dashboard" class="btn btn-box-tool"><i class="fa fa-times"></i></a>
+        </div>
+    </div>    
+    <div class="form-horizontal">       
+        <iframe class="healthchecks" src="#"></iframe>        
+    </div>
+</div>
+

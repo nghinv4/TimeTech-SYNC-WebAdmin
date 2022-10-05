@@ -1,0 +1,433 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Management.CLIENT.EditModel
+@{
+    ViewData["Title"] = "Create/Edit client";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            var code = COMMON.GetUrlParam('code');
+            if (code != null && code.length > 0) {
+                $("#divTitleForm").html("Category Client > Edit infomation");
+                DATA_CLIENT.LOAD_INFO(code);
+                $('#txtCLIENT_ID').attr('readonly', true);                
+                var client_id = COMMON.GetUrlParam('client_id');
+                DATA_SHARE_PROFILE.LOAD_DATA(client_id);
+            } else {
+                $("#divTitleForm").html("Category Client > Create infomation");
+            }
+        });
+        function AssignProfile() {            
+            if ($("#divPoupAssignProfile")[0]) {
+                $('.divOpacity').css('display', 'block');
+                $('#divPoupAssignProfile').show();
+                GOOGLE_DRIVE.LOAD_SELECT(null, "PROXY-PROFILE-DN", null); 
+                DATA_SHARE_PROFILE.POUP_LOAD_DATA();
+            }
+        }
+        function AssignProfileSumit(value,code,storage) {            
+            var client_id = COMMON.GetUrlParam('client_id');
+            const postData = [];
+            const postDataCode = [];
+            if (code.length > 0)
+                postDataCode.push(code);
+            if (value.length > 0) {
+                var item = {};
+                item["storage"] = storage;
+                item["profilE_NAME"] = value;
+                item["clienT_ID"] = client_id;
+                item["status"] = 1;
+                postData.push(item);
+            }
+            if (value.length == 0) {
+                $(".checkbox-itemPoup").each(function () {
+                    if (this.checked) {
+                        var item = {};
+                        item["storage"] = $(this).attr("storage");
+                        item["profilE_NAME"] = $(this).val();
+                        item["clienT_ID"] = client_id;  
+                        item["status"] = 1; 
+                        postData.push(item);
+                        var name = $(this).attr("name");
+                        postDataCode.push(name);
+                    }
+                });                
+            } 
+            if (postData.length == 0) {
+                FORM.ShowMessage("Select information to be Assign!", 'Error');
+                return;
+            }
+            if (confirm("Confirm Assign data!") == true) {
+                $.ajax({                    
+                    type: "POST",
+                    url: COMMON.GetServiceUrl("SyncProfile/auth/DATA_SHARE_PROFILE/InsertList", "SyncProfile"),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    crossDomain: true,
+                    data: JSON.stringify(postData),
+                    beforeSend: function (req) {
+                        req.setRequestHeader("Authorization", JSON.parse(window.localStorage.getItem("auth_api_gateway")).IdentityToken);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status + '-' + errorThrown);
+                    },
+                    success: function (result) {
+                        if (result.ResultCode == '203')
+                            FORM.ShowMessage(result.Message, 'Error');
+                        if (result.ResultCode == '403')
+                            FORM.ShowMessage(result.Message, 'Warning');
+                        if (result.ResultCode == '404')
+                            FORM.ShowMessage(result.Message, 'Warning');
+                        if (result.ResultCode == '200') {
+                            $.each(postDataCode, function (index, val) {
+                                $("#row_" + val).remove();
+                            });
+                            var client_id = COMMON.GetUrlParam('client_id');
+                            DATA_SHARE_PROFILE.LOAD_DATA(client_id);
+                            FORM.ShowMessage(result.Message, 'Success');
+                            
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}
+<section class="content">
+    <div class="row" style="margin-top:15px;">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right">
+                <li class="active"><a href="#Infomation" data-toggle="tab">Infomation</a></li>
+                <li id="tab-FunctionsMappings"><a href="#AssignProfile" data-toggle="tab">Assign profile</a></li>
+                <li class="pull-left header"><i class="fa fa-inbox"></i> <span id="divHeaderTitle">Create/Edit infomation</span></li>
+            </ul>
+            <div class="tab-content no-padding">
+                <div class="active tab-pane" id="Infomation">
+                    <div class="row no-print">
+                        <div class="col-xs-12" style="padding: 10px 0px 0px 0px;">
+                            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                                    <div class="btn-group PRF-UPDATE">
+                                        <a style="color: #fff;" href="javascript:DATA_CLIENT.INSERT_UPDATE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a style="color: #fff;" href="/Management/CLIENT/List?fn=20200617140640" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-reply"></i>&nbsp;Back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="box box-solid">
+                        <form class="form-horizontal">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Client id :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtCLIENT_ID" class="form-control" maxlength="50" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Client name :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtCLIENT_NAME" class="form-control" maxlength="125" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Client ip :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtCLIENT_IP" class="form-control" maxlength="125" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Full name :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtFULL_NAME" class="form-control" maxlength="125" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Email :</label>
+                                    <div class="col-sm-10">
+                                        <input placeholder="Text Input" id="txtEMAIL" class="form-control" maxlength="125" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Description :</label>
+                                    <div class="col-sm-10">
+                                        <textarea rows="3" placeholder="Text Input" id="txtDESCRIPTION" class="input-value form-control" maxlength="500"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Status :</label>
+                                    <div class="col-sm-10">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="ckSTATUS" value="">Activate
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Delete :</label>
+                                    <div class="col-sm-10">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="ckIS_DELETE" value="">Activate
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="AssignProfile">
+                    <div class="row no-print">
+                        <div class="col-xs-12" style="padding: 10px 0px 0px 0px;">
+                            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                                    <div class="btn-group PRF-UPDATE">
+                                        <a style="color: #fff;" href="javascript:AssignProfile();" title="Assign profile" class="btn btn-success btn-sm pull-right">
+                                            <i class="fa fa-share-alt"></i>&nbsp;Assign profile
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a style="color: #fff;" href="/Management/CLIENT/List?fn=20200617140640" title="Back to Dashboard" class="user-RoleMappings btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-reply"></i>&nbsp;Back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="box box-primary">                        
+                        <div class="box-body table-responsive">
+                            <table class="table table-bordered table-hover dataTable">
+                                <thead>
+                                    <tr>
+                                        <th class="class-nowrap">NO</th>
+                                        <th class="class-nowrap">CLIENT ID</th>
+                                        <th>PROFILE NAME</th>
+                                        <th class="class-nowrap">STORAGE</th>                                       
+                                        <th class="class-nowrap class-center">STATUS</th>                                        
+                                        <th class="class-nowrap class-center">CDATE</th>
+                                        <th class="class-center" colspan="1">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gridDataList" style="display: none;">
+                                    <tr id="row_{CODE}">                                        
+                                        <td class="class-nowrap">{NO}</td>
+                                        <td class="class-nowrap">{CLIENT_ID}</td>
+                                        <td>{PROFILE_NAME}</td>
+                                        <td class="class-nowrap">{STORAGE}</td>
+                                        <td class="class-nowrap class-center">{STATUS}</td>                                        
+                                        <td class="class-nowrap class-center">{CDATE_Timestamp}</td>
+                                        @*<td class="class-nowrap class-center"><a class="PRF-APPROVAL" href="javascript:DATA_SHARE_PROFILE.APPROVAL('{CODE}');"><i class="fa fa-check-square-o"></i> Approval</a></td>*@
+                                        <td class="class-nowrap class-center"><a class="PRF-DELETE" href="javascript:DATA_SHARE_PROFILE.DELETE('{CODE}');"><i class="fa fa-trash-o"></i> Delete</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="paginator">
+                                <ul id="paginationData" class="pagination">
+                                </ul>
+                            </div>
+                            <div class="paginator">
+                                <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecords">-1</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+
+            </div>
+        </div>
+    </div>
+</section>
+<div id="divPoupAssignProfile" style="width: auto; height: auto; background: #fff; margin: 0 auto; z-index: 1100; position: fixed; top: 40px; left: 5%; right: 5%; border-radius: 5px 5px 5px 5px; display: none;">
+    <div class="box box-warning" style="margin-bottom:0px !important;">
+        <div class="box-header with-border">
+            <h3 class="box-title">Assign Profile</h3>
+            <div class="box-tools pull-right">
+                <a href="javascript:FORM.ClosePoup1('divPoupAssignProfile');" class="btn btn-box-tool"><i class="fa fa-times"></i></a>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form class="form-horizontal">
+            <div class="box-body">
+                <div class="margin">
+                    <div class="btn-group">
+                        <label class="control-label">Profile name </label><br />
+                        <input id="txtPROFILE_NAME" class="form-control pull-right" placeholder="Profile name..." style="        width: 150px;" type="text">
+                    </div>
+                    <div class="btn-group">
+                        <label class="control-label">Storage</label><br />
+                        <select id="dropDRIVE_NAME" class="form-control select2" style="width: 250px;">
+                            <option value="{GOOGLE_EMAIL}">{DRIVE_NAME}</option>
+                        </select>
+                    </div>
+                    <div class="btn-group">
+                        <label class="control-label">Start date </label><br />
+                        <input id="txtCDATE_START_DATE" class="datepickerStart form-control pull-right" placeholder="Start date..." style="width: 150px;" type="text">
+                    </div>
+                    <div class="btn-group">
+                        <label class="control-label">Start date </label><br />
+                        <input id="txtCDATE_END_DATE" class="datepickerEnd form-control pull-right" placeholder="Start date..." style="        width: 150px;" type="text">
+
+                    </div>
+                    <div class="PRF-SEARCH btn-group" style="padding-top: 25px;">
+                        <a href="javascript:DATA_SHARE_PROFILE.POUP_SEARCH();" style="color: #fff;" title="Search" class="btn btn-success btn-sm">
+                            <i class="fa fa-search"></i>Search
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body table-responsive">
+                    <table class="table table-bordered table-hover dataTable">
+                        @*<thead>
+                                <tr>
+                                    <th class="class-checkbox">
+                                        <input id="ckCheckboxPoup" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridDataListPoup', 'checkbox-itemPoup');" type="checkbox" />
+                                    </th>
+                                    <th class="class-nowrap">NO</th>
+                                    <th class="class-nowrap">PROFILE_NAME</th>
+                                    <th class="class-nowrap">STORAGE</th>
+                                    <th class="class-nowrap">FILE_NAME</th>
+                                    <th class="class-nowrap class-center">VERSION</th>
+                                    <th class="class-nowrap class-center">SIZE</th>
+                                    <th class="class-nowrap class-center">STATUS</th>
+                                    <th class="class-nowrap class-center">CDATE</th>
+                                    <th class="class-center">Action</th>
+                                </tr>
+                            </thead>*@
+                        <tbody id="gridDataListPoup" style="display: none;overflow:auto;height:350px;">
+                            <tr id="row_{CODE}">
+                                <td class="class-checkbox">
+                                    <input type="checkbox" class="checkbox-itemPoup" storage="{STORAGE}" name="{CODE}" value="{PROFILE_NAME}" id="checkbox{CODE}">
+                                </td>
+                                <td class="class-nowrap">{NO}</td>
+                                <td class="">{PROFILE_NAME}</td>
+                                <td class="">{STORAGE}</td>
+                                <td class="class-nowrap">{FILE_NAME}</td>
+                                <td class="class-nowrap class-center">{VERSION}</td>
+                                <td class="class-nowrap class-center">{SIZE_FormatNumber}</td>
+                                <td class="class-nowrap class-center">{STATUS}</td>
+                                <td class="class-nowrap class-center">{CDATE_Timestamp}</td>
+                                <td class="class-nowrap class-center"><a class="PRF-ASSIGN" href="javascript:AssignProfileSumit('{PROFILE_NAME}','{CODE}','{STORAGE}');"><i class="fa fa-check-square-o"></i> Assign</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer" style="padding: 0px 10px !important;">
+                <div class="paginator">
+                    <ul id="paginationDataPoup" class="pagination">
+                    </ul>
+                </div>
+                <div class="paginator">
+                    <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecordsPoup">-1</span></div>
+                </div>
+            </div>
+            <!-- /.box-footer -->
+        </form>
+    </div>
+    <div style="text-align:center;clear:both;padding:10px;">
+        <a href="javascript:AssignProfileSumit('','','');" class="btn btn-success btn-sm">Assign profile</a>
+        <a href="javascript:FORM.ClosePoup1('divPoupAssignProfile');" class="btn btn-primary btn-sm">Cancel</a>
+    </div>
+</div>
+<!-- Main content -->
+@*<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="divTitleForm" style="padding-left: 5px; font-size: 20px;"> Create/Edit infomation</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group AMS-UPDATE">
+                        <a style="color: #fff;" href="javascript:DATA_CLIENT.INSERT_UPDATE();" title="Create/Edit infomation" class="btn btn-success btn-sm pull-right">
+                            <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                        </a>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Management/CLIENT/List?fn=20200617140640" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title"><span class="Language-DATA_CLIENT-Edit-Info"></span></h3>
+            </div>
+            <form class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Client id :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtCLIENT_ID" class="form-control" maxlength="50" type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Client name :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtCLIENT_NAME" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Client ip :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtCLIENT_IP" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Full name :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtFULL_NAME" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Email :</label>
+                        <div class="col-sm-10">
+                            <input placeholder="Text Input" id="txtEMAIL" class="form-control" maxlength="125" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Description :</label>
+                        <div class="col-sm-10">
+                            <textarea rows="3" placeholder="Text Input" id="txtDESCRIPTION" class="input-value form-control" maxlength="500"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Status :</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox">
+                                <input type="checkbox" id="ckSTATUS" value="">Activate
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Delete :</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox">
+                                <input type="checkbox" id="ckIS_DELETE" value="">Activate
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>*@
+

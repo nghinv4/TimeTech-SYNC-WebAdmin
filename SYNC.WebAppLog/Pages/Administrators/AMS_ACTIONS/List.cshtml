@@ -1,0 +1,126 @@
+﻿@page
+@model SYNC.WebAppLog.Pages.Administrators.AMS_ACTIONS.ListModel
+@{
+    ViewData["Title"] = "Actions";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            AMS_ACTIONS.LOAD_DATA();
+        });
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="div-title-content" style="padding-left: 5px; font-size: 20px;">Category Actions</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm"><i class="fa fa-download"></i>&nbsp;Events</button>
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="AMS-INSERT"><a href="/Administrators/AMS_ACTIONS/Edit?fn=20200616164432"><i class="fa fa-plus"></i>Create new</a></li>
+                            <li class="AMS-DELETE"><a href="javascript:AMS_ACTIONS.DELETE('');"><i class="fa fa-trash-o"></i>Delete</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Dashboard" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="margin">
+                <div class="btn-group">
+                    <label class="control-label">Code </label><br />
+                    <input id="txtCODE" class="form-control pull-right" placeholder="Code..." style="width: 250px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Name </label><br />
+                    <input id="txtACTION_NAME" class="form-control pull-right" placeholder="Code..." style="width: 250px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Activate</label><br />
+                    <select id="dropSTATUS" class="form-control select2" style="width: 150px;">
+                        <option selected="selected" value="-1">--Select--</option>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <label class="control-label">Delete</label><br />
+                    <select id="dropIS_DELETE" class="form-control select2" style="width: 150px;">
+                        <option selected="selected" value="-1">--Select--</option>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
+                <div class="PRF-SEARCH btn-group" style="padding-top: 25px;">
+                    <a href="javascript:AMS_ACTIONS.SEARCH();" style="color: #fff;" title="Search" class="btn btn-success btn-sm">
+                        <i class="fa fa-search"></i>Search
+                    </a>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-hover dataTable">
+                    <thead>
+                        <tr>
+                            <th class="class-checkbox">
+                                <input id="ckCheckbox" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridDataList', 'checkbox-item');" type="checkbox" />
+                            </th>
+                            <th class="class-nowrap">NO</th>
+                            <th class="class-nowrap">CODE</th>
+                            <th>NAME</th>                            
+                            <th class="class-nowrap class-center">STATUS</th>
+                            <th class="class-nowrap class-center">DELETE</th>
+                            <th class="class-nowrap class-center">CUSER</th>
+                            <th class="class-nowrap class-center">CDATE</th>
+                            <th class="class-nowrap class-center">LUSER</th>
+                            <th class="class-nowrap class-center">LDATE</th>
+                            <th class="class-center" colspan="2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridDataList" style="display: none;">
+                        <tr id="row_{CODE}">
+                            <td class="class-checkbox">
+                                <input type="checkbox" class="checkbox-item" name="item" value="{CODE}" id="checkbox{CODE}">
+                            </td>
+                            <td class="class-nowrap">{NO}</td>
+                            <td class="class-nowrap">{CODE}</td>
+                            <td>{ACTION_NAME}</td>
+                            <td class="class-nowrap class-center">{STATUS}</td>
+                            <td class="class-nowrap class-center">{IS_DELETE}</td>
+                            <td class="class-nowrap class-center">{CUSER}</td>
+                            <td class="class-nowrap class-center">{CDATE_Timestamp}</td>
+                            <td class="class-nowrap class-center">{LUSER}</td>
+                            <td class="class-nowrap class-center">{LDATE_Timestamp}</td>
+                            <td id="PRF-EDIT" class="class-nowrap class-center"><a class="PRF-EDIT" href="/Administrators/AMS_ACTIONS/Edit?fn=20200616164432&code={CODE}"><i class="fa fa-fw fa-edit"></i> Edit</a></td>
+                            <td id="PRF-DELETE" class="class-nowrap class-center"><a class="PRF-DELETE" href="javascript:AMS_ACTIONS.DELETE('{CODE}');"><i class="fa fa-trash-o"></i> Delete</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="paginator">
+                    <ul id="paginationData" class="pagination">
+                    </ul>
+                </div>
+                <div class="paginator">
+                    <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecords">-1</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

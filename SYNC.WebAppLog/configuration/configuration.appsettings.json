@@ -1,0 +1,12 @@
+{
+  "AppSetting": {       
+    "ConfigSendMail": {
+      "SOFTWARE_NAME": "TIMEBEAT",
+      "HOT_LINE": "1900 2101",
+      "SEND_MAIL_HOST": "smtp.gmail.com",
+      "SEND_MAIL_PORT": "587",
+      "SEND_MAIL_ADDRESS": "timebeat.suport@gmail.com",
+      "SEND_MAIL_PASSWORD": "Abcde12345-"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - INTERNAL MANAGEMENT</title>
+    <!-- Bootstrap 3.3.5 -->
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="/plugins/iCheck/square/blue.css">
+    <!-- Style jquery.toast show message-->
+    <link rel="stylesheet" href="/plugins/DataProvider/jquery.toast/jquery.toast.min.css">
+    <!-- config style -->
+    <link rel="stylesheet" href="/css/Config.Styles.css">
+    <link rel="stylesheet" href="/plugins/datepicker/datepicker3.css" />
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        @RenderBody()
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery 2.1.4 -->
+    <script type="text/javascript" src="/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <!-- Bootstrap 3.3.5 -->
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script type="text/javascript" src="/plugins/iCheck/icheck.min.js"></script>
+    <!--Config SSO -->
+    <script type="text/javascript" src="/plugins/Keycloak/keycloak.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/keycloak-js@10.0.0/dist/keycloak.min.js"></script>
+    <script type="text/javascript" src="/js/Setting.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="/js/OAuth2.js" asp-append-version="true"></script>
+    <!-- show message -->
+    <script type="text/javascript" src="/plugins/DataProvider/jquery.toast/jquery.toast.min.js"></script>
+    <script type="text/javascript" src="/plugins/DataProvider/aes.js"></script>
+    <script type="text/javascript" src="/plugins/DataProvider/Common.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="/plugins/DataProvider/date.format.js"></script>
+    <script type="text/javascript" src="/plugins/DataProvider/DataProviderJs.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="/plugins/DataProvider/jquery.pagination/jquery.twbsPagination.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            OAuth2.InitOAuth2();
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

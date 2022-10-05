@@ -1,0 +1,161 @@
+﻿@page
+@model Internal.Management.Pages.Management.STORAGE.GoogleDriveModel
+@{
+    ViewData["Title"] = "Google Drive";
+    Layout = "~/Pages/Shared/_LayoutManagement.cshtml";
+}
+@section scripts {
+    <script type="text/javascript">
+        var helpTransaction = '';
+        $(function () {
+            GOOGLE_DRIVE.LOAD_SELECT("nghinv-test-profile-long-centaur-357914-5eb77149119f","DRIVE_TYPE_01", GOOGLE_DRIVE_CALL_BACK);
+            $('#transactionInputFile').change(function (e) {
+                $("#help-transaction").html(helpTransaction);
+                $("#div-progress-bar").attr("aria-valuenow", 0);
+                $("#div-progress-bar").css("width", 0 + "%");
+                $("#div-progress-bar-span").html(0 + "% Complete");
+            });
+        });       
+        function GOOGLE_DRIVE_CALL_BACK() {            
+            var DRIVE_NAME = $("#dropDRIVE_NAME").val();
+            if (DRIVE_NAME == null) {
+                DRIVE_NAME = -1
+            }
+            GOOGLE_DRIVE_STORAGE.LOAD_DATA(DRIVE_NAME);
+        }
+        function CreateTransaction() {
+            if ($("#divPoupCreateTransaction")[0]) {
+                if ($("#divPoupBox-titleCreateTransaction")[0]) {
+                    helpTransaction = "Handle the process of creating profiler data.";
+                    $("#divPoupBox-titleCreateTransaction").html("Upload file google drive");
+                    $("#help-transaction").html(helpTransaction);
+                    $(".submit-upload-transaction").attr("href", "javascript:GOOGLE_DRIVE_STORAGE.UPLOAD('Upload');");                  
+                }
+                $(".divOpacity").css('display', 'block');
+                $("#divPoupCreateTransaction").show();
+            }
+        }
+    </script>
+}
+<!-- Main content -->
+<section class="content">
+    <div class="row no-print">
+        <div class="col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+            <div class="col-md-9" style="padding-left: 0px;">
+                <h5><i class="fa fa-table"></i><span id="div-title-content" style="padding-left: 5px; font-size: 20px;">STORAGE > Google drive</span></h5>
+            </div>
+            <div class="col-md-3 pull-right" style="padding-right: 0px;">
+                <div class="margin" style="margin-top: 0px; margin-right: 0px; text-align: right;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm"><i class="fa fa-download"></i>&nbsp;Events</button>
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="PRF-UPLOAD"><a href="javascript:CreateTransaction();"><i class="fa fa-cloud-upload"></i>Upload</a></li>
+                            <li class="PRF-DELETE"><a href="javascript:GOOGLE_DRIVE_STORAGE.DELETE('');"><i class="fa fa-trash-o"></i>Delete</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a style="color: #fff;" href="/Dashboard" title="Back to Dashboard" class="btn btn-primary btn-sm pull-right">
+                            <i class="fa fa-reply"></i>&nbsp;Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-primary">
+            <div class="margin">
+                <div class="btn-group">
+                    <input id="txtKeyword" class="form-control pull-right" placeholder="Keyword..." style="width: 250px;" type="text">
+                </div>
+                <div class="btn-group">
+                    <select id="dropDRIVE_NAME" class="form-control select2" style="width: 250px;">
+                        <option value="{DRIVE_NAME}">{DRIVE_NAME}</option>
+                    </select>
+                </div>
+                <div class="PRF-SEARCH btn-group">
+                    <a href="javascript:GOOGLE_DRIVE_STORAGE.SEARCH('STORE_PROFILE');" style="color: #fff;" title="Search" class="btn btn-success btn-sm">
+                        <i class="fa fa-search"></i>Search
+                    </a>
+                </div>
+                <div class="pull-right btn-group">
+                    <div id="totalRecords" style="margin-top: 20px !important"></div>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-hover dataTable">
+                    <thead>
+                        <tr>                            
+                            <th class="class-checkbox">
+                                <input id="ckCheckbox" style="margin-top: -18px;" onclick="javascript: COMMON.CheckAllCheckbox(this, 'gridDataList', 'checkbox-item');" type="checkbox" />
+                            </th>
+                            <th class="class-nowrap">Id</th>
+                            <th class="">Name</th>
+                            <th class="class-nowrap">Size</th>
+                            <th class="class-nowrap">Version</th>
+                            <th class="class-nowrap">MimeType</th>
+                            <th class="class-nowrap class-center">CreatedTime</th>                            
+                            <th class="class-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridDataList" style="display: none;">
+                        <tr id="row_{Id}">
+                            <td class="class-checkbox">
+                                <input type="checkbox" class="checkbox-item" name="item" value="{Id}" id="checkbox{Id}">
+                            </td>                            
+                            <td class="class-nowrap">{Id}</td>
+                            <td class="">{Name}</td>
+                            <td class="class-nowrap">{Size_FormatNumber}</td>
+                            <td class="class-nowrap">{Version}</td>
+                            <td class="class-nowrap">{MimeType}</td>
+                            <td class="class-nowrap class-center">{CreatedTime}</td>                            
+                            <td class="class-nowrap class-center">
+                                <a class="PRF-DELETE" href="javascript:GOOGLE_DRIVE_STORAGE.DELETE('{Id}');"><i class="fa fa-trash-o"></i> Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @*<div class="paginator">
+                    <ul id="paginationData" class="pagination">
+                    </ul>
+                </div>
+                <div class="paginator">
+                    <div style="padding-top: 15px; padding-right:20px;"><span>Total records : </span><span id="totalRecords">-1</span></div>
+                </div>*@
+            </div>
+
+        </div>
+    </div>
+</section>
+<div id="divPoupCreateTransaction" style="width: auto; height: auto; background: #fff; margin: 0 auto; z-index: 200; position: fixed; top: 80px; left: 20%; right: 20%; border-radius: 5px 5px 5px 5px; display: none;">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 id="divPoupBox-titleCreateTransaction" class="box-title">Upload file google drive</h3>
+            <div class="box-tools pull-right">
+                <a href="javascript:FORM.ClosePoup1('divPoupCreateTransaction');" class="btn btn-box-tool"><i class="fa fa-times"></i></a>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form role="form">
+            <div class="box-body" style="padding-left:20px;padding-right:20px;">
+                <div class="form-group">
+                    <label for="exampleInputFile">File input</label>
+                    <input type="file" id="transactionInputFile">
+                    <p id="help-transaction" class="help-block">Example block-level help text here.</p>
+                </div>
+                <div class="progress">
+                    <div id="div-progress-bar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                        <span id="div-progress-bar-span" class="sr-only" style="position: relative !important;">0% Complete</span>
+                    </div>
+                </div>
+                <a href="javascript:GOOGLE_DRIVE_STORAGE.UPLOAD();" class="submit-upload-transaction btn btn-success btn-sm pull-right">Upload</a>
+            </div>
+        </form>
+    </div>
+</div>
