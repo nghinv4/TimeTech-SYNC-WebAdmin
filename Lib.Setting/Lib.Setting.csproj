@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Lib.Setting</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0-preview.6.21352.12" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0-preview.6.21352.12" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0-preview.6.21352.12" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0-preview.6.21352.12" />
+    <PackageReference Include="Neo4j.Driver" Version="4.3.1" />
+    <PackageReference Include="Neo4jClient" Version="4.1.14" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lib.Json\Lib.Json.csproj" />
+  </ItemGroup>
+
+</Project>

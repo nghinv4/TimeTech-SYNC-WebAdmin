@@ -581,7 +581,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\00-LIB\Lib.Setting\Lib.Setting.csproj" />
+    <ProjectReference Include="..\Lib.Setting\Lib.Setting.csproj" />
   </ItemGroup>
 
 </Project>
